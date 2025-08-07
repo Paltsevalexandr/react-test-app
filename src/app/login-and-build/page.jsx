@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import styles from "./page.module.scss";
 import InfoSection from "../components/login_and_build/InfoSection";
 import FormSection from "../components/login_and_build/FormSection";
+import StartSection from '../components/login_and_build/StartSection';
 
 
 export default function page() {
@@ -19,11 +20,17 @@ export default function page() {
 			/>
 			{
 				numberOfParts != null && timePerPart != null
-				? <InfoSection
-					styles={styles}
-					numberOfParts={numberOfParts}
-					timePerPart={timePerPart}
-					/>
+					?
+					<>
+						<InfoSection
+							styles={styles}
+							numberOfParts={numberOfParts}
+							timePerPart={timePerPart}
+						/>
+						<StartSection
+							styles={styles}
+						/>
+					</>
 				: null
 			}
 			

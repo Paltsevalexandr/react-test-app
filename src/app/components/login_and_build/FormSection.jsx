@@ -4,14 +4,49 @@ import React, { useState } from 'react';
 export default function FormSection({ styles, setNumberOfParts, setTimePerPart }) {
     const [loginId, setLoginId] = useState("");
     const [buildNumber, setBuildNumber] = useState("");
+    const [errors, setErrors] = useState([]);
 
     function submitForm(e) {
 		e.preventDefault();
+        fetch('http://localhost:5000/get-build-data', {
+            method: "POST",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({ loginId, buildNumber })
+        })
+            .then(async (response) => {
+                if (response.status == 200) {
+                    let build = await response.json();
+                    const { numberOfParts, timePerPart } = build;
+                    console.log(numberOfParts, timePerPart)
+                    setNumberOfParts(numberOfParts);
+                    setTimePerPart(timePerPart);
+                    setErrors([]);
+                }
+                else {
+                    let responseBody = await response.json();
+                    let errors = responseBody.errors;
+                    if (errors) {
+                        console.log(errors, 'errors');
+                        setErrors(errors);
+                        setNumberOfParts(null);
+                        setTimePerPart(null);
+                    }
+                    else {
+                        setErrors(["Unknown error"]);
+                        setNumberOfParts(null);
+                        setTimePerPart(null);
+                    }
+                }
+            })
+            .catch((error) => {
+                setErrors(["Unknown error"]);
+                setNumberOfParts(null);
+                setTimePerPart(null);
+            });
+    }
 
-        setNumberOfParts(4);
-        setTimePerPart(23);
-
-	}
     return (
         <section className={styles.login}>
             <div className={styles.login__content}>
@@ -19,21 +54,47 @@ export default function FormSection({ styles, setNumberOfParts, setTimePerPart }
                     Login & Build Selection
                 </h1>
                 <form className={styles.login__form}>
-                    <input onChange={(e) => setLoginId(e.target.value)}
-                        value={loginId}
-                        className={styles.login__input}
-                        type="text"
-                        name="login_id"
-                        id="loginId" />
+                    <label className={styles.login__label} htmlFor="loginId">
+                        <span className={styles['login__label-text']}>
+                            Login Id
+                        </span>
+                        <input onChange={(e) => setLoginId(e.target.value)}
+                            value={loginId}
+                            className={styles.login__input}
+                            type="text"
+                            name="login_id"
+                            id="loginId" />
+                    </label>
                     
-                    <input
-                        onChange={(e) => setBuildNumber(e.target.value)}
-                        value={buildNumber}
-                        className={styles.login__input}
-                        type="text"
-                        name="build_number"
-                        id="buildNumber"
-                    />
+                    <label className={styles.login__label} htmlFor="buildNumber">
+                        <span className={styles['login__label-text']}>
+                            Build Number
+                        </span>
+                        <input
+                            onChange={(e) => setBuildNumber(e.target.value)}
+                            value={buildNumber}
+                            className={styles.login__input}
+                            type="text"
+                            name="build_number"
+                            id="buildNumber"
+                        />
+                    </label>
+                    <p className={styles.login__errors} style={{display: errors.length > 0 ? 'block' : 'none'}}>
+                        {
+                            errors.map((error, index) => {
+                                return (
+                                    <span key={`login__error-span-${index}`}>
+                                        {
+                                            index > 0 && errors.length > 1
+                                                ? <br />
+                                                : null
+                                        }
+                                        {error}
+                                    </span>
+                                )
+                            })
+                        }
+                    </p>
                     <button type="submit"
                         className={styles.login__button}
                         onClick={submitForm}>
@@ -44,3 +105,5 @@ export default function FormSection({ styles, setNumberOfParts, setTimePerPart }
         </section>
     )
 }
+
+
