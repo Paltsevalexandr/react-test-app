@@ -2,23 +2,22 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 
-export default function StartSection({ styles }) {
+export default function StartSection({ styles, loginId, buildNumber }) {
 	const router = useRouter();
 
 	function start() {
-		console.log("start");
-		fetch('http://localhost:5000/start?login_id=user1')  // TODO - change login id to dynamic
+		fetch(`http://localhost:5000/start?login_id=${loginId}`)
 			.then(async (response) => {
 				if (response.status == 200) {
-					console.log("success")
-					const result = await response.json();
-					router.push('/tracking');
-					console.log(result);
+					localStorage.setItem("loginId", loginId);
+					localStorage.setItem("buildNumber", buildNumber);
+					router.push("/tracking");					
 				}
 				else {
 					console.log("failed")
 				}
-			});
+			})
+			.catch((error) => console.log(error));
 	}
 
     return (

@@ -8,15 +8,21 @@ import StartSection from '../components/login_and_build/StartSection';
 
 
 export default function page() {
+	const [loginId, setLoginId] = useState("");
+	const [buildNumber, setBuildNumber] = useState("");
 	const [numberOfParts, setNumberOfParts] = useState(null);
 	const [timePerPart, setTimePerPart] = useState(null);
 
 	return (
-		<>
+		<main>
 			<FormSection
 				styles={styles}
 				setNumberOfParts={setNumberOfParts}
 				setTimePerPart={setTimePerPart}
+				buildNumber={buildNumber}
+				setBuildNumber={setBuildNumber}
+				loginId={loginId}
+				setLoginId={setLoginId}
 			/>
 			{
 				numberOfParts != null && timePerPart != null
@@ -29,12 +35,14 @@ export default function page() {
 						/>
 						<StartSection
 							styles={styles}
+							loginId={loginId}
+							buildNumber={buildNumber}
 						/>
 					</>
 				: null
 			}
 			
-		</>
+		</main>
 		
 		
 	)

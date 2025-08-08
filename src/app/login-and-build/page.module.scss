@@ -1,4 +1,5 @@
-@import "../../variables.scss";
+@use "../../_variables" as *;
+@use "../../_mixins.scss" as *;
 
 
 .login {
@@ -8,7 +9,6 @@
         align-items: center;
         color: $mainColor;
     }
-    
 
     &__title {
         margin-bottom: 1.5rem;
@@ -54,20 +54,7 @@
     }
 
     &__button {
-        width: 10rem;
-        height: 2.25rem;
-        border-radius: 1rem;
-        border: 1px solid $mainColor;
-        box-shadow: none;
-        background-color: $mainColor;
-        color: whitesmoke;
-        font-size: 1.0625rem;
-        cursor: pointer;
-        transition: border-color 0.2s linear;
-
-        &:hover {
-            border-color: goldenrod;
-        }
+        @include button;
     }
 }
 
@@ -92,19 +79,6 @@
     max-width: 28.125rem;
 
     &__button {
-        width: 10rem;
-        height: 2.25rem;
-        border-radius: 1rem;
-        border: 1px solid $mainColor;
-        box-shadow: none;
-        background-color: $mainColor;
-        color: whitesmoke;
-        font-size: 1.0625rem;
-        cursor: pointer;
-        transition: border-color 0.2s linear;
-
-        &:hover {
-            border-color: goldenrod;
-        }
+        @include button;
     }
 }

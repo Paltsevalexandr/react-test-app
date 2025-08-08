@@ -1,0 +1,127 @@
+@use "../../variables.scss" as *;
+@use "../../mixins.scss" as *;
+
+
+.header {
+    padding: 1.25rem 2rem;
+    background-color: #e0d9e2;
+
+    &__content {
+        max-width: 80rem;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+    &__info {
+        padding: 0.375rem 1rem;
+        display: flex;
+        flex-wrap: nowrap;
+        font-size: 1.125rem;
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    &__info-label {
+        margin-right: 1rem;
+        font-weight: bold;
+    }
+}
+.tracking {
+    &__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: $mainColor;
+    }
+
+    &__title {
+        margin-bottom: 1.5rem;
+        font-size: 2.625rem;
+        font-weight: normal;
+    }
+    &__popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        padding: 3rem 2rem;
+        width: 90%;
+        max-width: 35rem;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        border-radius: 1rem;
+        border: solid 1px $mainColor;
+
+        &-body {
+
+        }
+        &-title {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+        &-time {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        &-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        &-btn {
+            @include button;
+        }
+    }
+}
+.timer {
+    padding: 4rem 2.5rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    color: $mainColor;
+
+    &__time-wrap {
+        margin: 0 auto 1.25rem;
+        padding: 2rem 3rem;
+        max-width: 25rem;
+        background-color: rgb(201, 201, 201);
+        border-radius: 6px;
+        border: goldenrod 1px solid;
+    }
+
+    &__time {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+
+        &-highlighted {
+            color: rgb(122, 0, 0);
+        }
+    }
+
+    &__controls {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    &__btn {
+        @include button;
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.5);
+    // backdrop-filter: blur(6px);
+}

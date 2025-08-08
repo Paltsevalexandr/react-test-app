@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import Errors from '../common/Errors';
 
 
-export default function FormSection({ styles, setNumberOfParts, setTimePerPart }) {
-    const [loginId, setLoginId] = useState("");
-    const [buildNumber, setBuildNumber] = useState("");
+export default function FormSection({
+    styles, setNumberOfParts,
+    setTimePerPart,
+    loginId, setLoginId,
+    buildNumber, setBuildNumber
+}) {
     const [errors, setErrors] = useState([]);
 
     function submitForm(e) {
@@ -19,7 +23,7 @@ export default function FormSection({ styles, setNumberOfParts, setTimePerPart }
                 if (response.status == 200) {
                     let build = await response.json();
                     const { numberOfParts, timePerPart } = build;
-                    console.log(numberOfParts, timePerPart)
+
                     setNumberOfParts(numberOfParts);
                     setTimePerPart(timePerPart);
                     setErrors([]);
@@ -79,22 +83,7 @@ export default function FormSection({ styles, setNumberOfParts, setTimePerPart }
                             id="buildNumber"
                         />
                     </label>
-                    <p className={styles.login__errors} style={{display: errors.length > 0 ? 'block' : 'none'}}>
-                        {
-                            errors.map((error, index) => {
-                                return (
-                                    <span key={`login__error-span-${index}`}>
-                                        {
-                                            index > 0 && errors.length > 1
-                                                ? <br />
-                                                : null
-                                        }
-                                        {error}
-                                    </span>
-                                )
-                            })
-                        }
-                    </p>
+                    <Errors errors={errors} />
                     <button type="submit"
                         className={styles.login__button}
                         onClick={submitForm}>
