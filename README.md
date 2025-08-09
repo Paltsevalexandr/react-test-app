@@ -1,7 +1,7 @@
 Description
 
 A simple React application for testing and demonstration purposes.
-It is simulates a production line time tracking system. This application will help workers 
+It simulates a production line time tracking system. This application helps workers 
 track the duration of a build process, enter production defects, and manage extended work 
 time after the scheduled duration has passed.
 
