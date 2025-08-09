@@ -111,7 +111,6 @@ export default function TrackingContent({
 
     async function saveDefects() {
         setSessionSubmitted(true);
-        toggleSession(true);
         try {
             let defectsAmountValue = defectsAmount;
             if (typeof defectsAmount != 'number' || isNaN(defectsAmount)) {

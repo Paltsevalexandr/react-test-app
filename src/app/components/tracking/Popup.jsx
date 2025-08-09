@@ -12,9 +12,9 @@ export default function Popup({ styles, session, submitData }) {
         const runTimer = async () => {
             setTime(prevTime => {
                 if (prevTime - 1 <= 0) {
-                    clearInterval(interval);
                     resetSession();
                     submitData();
+                    clearInterval(interval);
                     return prevTime;
                 }
                 else {

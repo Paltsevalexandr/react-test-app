@@ -44,12 +44,12 @@ export default function page() {
                         setErrors([]);
                     }
                     else {
-                        setErrors(["Failed to save data 1"]);
+                        setErrors(["Failed to save data"]);
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    setErrors(["Failed to save data 2"]);
+                    setErrors(["Failed to save data"]);
                 });
         }
         catch (error) {
