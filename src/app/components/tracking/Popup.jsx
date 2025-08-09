@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 export default function Popup({ styles, session, submitData }) {
     let storedTime = localStorage.getItem('storedTime');
     if (!storedTime) { 
-        storedTime = 1 * 60;
+        storedTime = 10 * 60;
     }
     const [time, setTime] = useState(storedTime);
 
@@ -15,9 +15,12 @@ export default function Popup({ styles, session, submitData }) {
                     clearInterval(interval);
                     resetSession();
                     submitData();
+                    return prevTime;
                 }
-                localStorage.setItem('storedTime', prevTime - 1);
-                return prevTime - 1;
+                else {
+                    localStorage.setItem('storedTime', prevTime - 1);
+                    return prevTime - 1;
+                } 
             });
         };
 
@@ -29,7 +32,7 @@ export default function Popup({ styles, session, submitData }) {
     }, []);
 
     function resetSession() {
-
+        localStorage.removeItem('storedTime');
     }
 
     function handleYesBtn() {
@@ -41,6 +44,7 @@ export default function Popup({ styles, session, submitData }) {
     }
 
     async function setExtraTime() {
+        resetSession();
         const baseUrl = "http://localhost:5000/set-extra-time";
         const params = new URLSearchParams({
             session_id: session.id

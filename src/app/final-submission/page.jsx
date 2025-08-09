@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./page.module.scss";
 import { useRouter } from 'next/navigation';
+import FinalForm from '../components/final-submission/FinalForm';
 
 
 export default function page() { 
@@ -58,34 +59,14 @@ export default function page() {
 
     return (
         <div className={styles.final}>
-            <h1 className={styles.final__title}>
-                Final Submission
-            </h1>
             <div className={styles.final__content}>
-                <label htmlFor="total-parts"
-                className={styles.final__label}>
-                    <span className={styles['final__label-text']}>
-                        Total Parts
-                    </span>
-                    <input
-                        className={styles.final__input}
-                        value={totalParts}
-                        onChange={(e) => setTotalParts(+e.target.value)}
-                        type="number"
-                        name="total-parts"
-                        id="total-parts" />
-                </label>
-                {
-                    errors.length > 0
-                    ?  <p className={styles.final__errors}>
-                        {errors}
-                    </p>
-                    : null
-                }
-                <button className={styles['final__btn']}
-                     onClick={finalSubmit}>
-                    Submit
-                </button>
+                <FinalForm
+                    styles={styles}
+                    totalParts={totalParts}
+                    setTotalParts={setTotalParts}
+                    errors={errors}
+                    finalSubmit={finalSubmit}
+                />
             </div>
         </div>
         

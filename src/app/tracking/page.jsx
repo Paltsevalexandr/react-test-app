@@ -100,10 +100,6 @@ export default function page() {
             </header>
             <section className={styles.tracking}>
                 <div className={styles.tracking__content}>
-                    <h1 className={styles.tracking__title}>
-                        Timer & Work Tracking
-                    </h1>
-
                     <TrackingContent
                         timePerPart={timePerPart}
                         numberOfParts={numberOfParts}

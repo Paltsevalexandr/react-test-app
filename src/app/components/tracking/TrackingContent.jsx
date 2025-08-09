@@ -14,11 +14,11 @@ export default function TrackingContent({
     const [timeLeft, setTimeLeft] = useState(null);
     const [session, setSession] = useState(null);
     const [defectsAmount, setDefectsAmount] = useState(0);
-    const [stopSessionUpdates, setStopSessionUpdates] = useState(false);
+    const [sessionSubmitted, setSessionSubmitted] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (loginId && !stopSessionUpdates) {
+            if (loginId && !sessionSubmitted) {
                 try {
                     const baseUrl = "http://localhost:5000/get-session";
                     const params = new URLSearchParams({
@@ -45,7 +45,7 @@ export default function TrackingContent({
                     setErrors(["Problem connecting with server"]);
                 }
             }
-            else if (stopSessionUpdates) {
+            else if (sessionSubmitted) {
                 clearInterval(interval);
             }
         };
@@ -110,14 +110,13 @@ export default function TrackingContent({
     }
 
     async function saveDefects() {
+        setSessionSubmitted(true);
         toggleSession(true);
         try {
             let defectsAmountValue = defectsAmount;
             if (typeof defectsAmount != 'number' || isNaN(defectsAmount)) {
                 defectsAmountValue = 0;
             }
-
-            console.log(typeof defectsAmount, defectsAmount, defectsAmountValue);
             
             const params = new URLSearchParams({
                 session_id: session.id,
@@ -135,7 +134,7 @@ export default function TrackingContent({
                 .then(async response => {
                     const json = await response.json();
                     const success = json.success;
-                    console.log(json);
+
                     if (success) {
                         router.push("/final-submission");
                         setErrors([]);
@@ -154,7 +153,7 @@ export default function TrackingContent({
     }
 
     async function resetSession() {
-        setStopSessionUpdates(true);
+        setSessionSubmitted(true);
         try {
             const params = new URLSearchParams({
                 session_id: session.id,
@@ -198,7 +197,7 @@ export default function TrackingContent({
     return (
         <div className={styles.timer}>
             {
-                timeLeft < 0
+                !sessionSubmitted && timeLeft < 0
                     ? <Popup
                         styles={styles}
                         session={session}
@@ -207,24 +206,26 @@ export default function TrackingContent({
                     : null
             }
             {
-                errors.length == 0 && session && session.is_paused
-                    ? <Overlay
-                        styles={styles}
-                        resumeSession={() => toggleSession(false)}
-                    />
-                    : errors.length > 0
-                        ? <Errors errors={errors}
-                            styles={{ fontSize: "2rem", textAlign: "center" }}
-                        />
-                        : <Timer
+                sessionSubmitted
+                    ? <h1>Session Submitted</h1>
+                    : errors.length == 0 && session && session.is_paused
+                        ? <Overlay
                             styles={styles}
-                            submitData={saveDefects}
-                            defectsAmount={defectsAmount}
-                            setDefectsAmount={setDefectsAmount}
-                            textClasses={textClasses}
-                            formattedTime={formattedTime}
-                            pauseSession={()=>toggleSession(true)}
+                            resumeSession={() => toggleSession(false)}
                         />
+                        : errors.length > 0
+                            ? <Errors errors={errors}
+                                styles={{ fontSize: "2rem", textAlign: "center" }}
+                            />
+                            : <Timer
+                                styles={styles}
+                                submitData={saveDefects}
+                                defectsAmount={defectsAmount}
+                                setDefectsAmount={setDefectsAmount}
+                                textClasses={textClasses}
+                                formattedTime={formattedTime}
+                                pauseSession={()=>toggleSession(true)}
+                            />
             }
         </div>
     );
