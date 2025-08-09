@@ -35,7 +35,6 @@ export default function TrackingContent({
                     );
                     
                     const json = await res.json();
-                    console.log(json);
                     const { timeLeft, session } = json;
                     setSession(session);
                     setTimeLeft(timeLeft);
