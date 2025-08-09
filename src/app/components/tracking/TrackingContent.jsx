@@ -174,7 +174,7 @@ export default function TrackingContent({
                     const success = json.success;
                     console.log(json);
                     if (success) {
-                        router.push("/login-and-build");
+                        router.push("/");
                         setErrors([]);
                     }
                     else {
