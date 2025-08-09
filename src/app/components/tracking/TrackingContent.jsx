@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Errors from "../common/Errors";
 import Timer from './Timer';
 import Overlay from './Overlay';
@@ -9,12 +10,15 @@ export default function TrackingContent({
     setErrors, loginId,
     buildNumber
 }) {
+    const router = useRouter();
     const [timeLeft, setTimeLeft] = useState(null);
     const [session, setSession] = useState(null);
+    const [defectsAmount, setDefectsAmount] = useState(0);
+    const [stopSessionUpdates, setStopSessionUpdates] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (loginId) {
+            if (loginId && !stopSessionUpdates) {
                 try {
                     const baseUrl = "http://localhost:5000/get-session";
                     const params = new URLSearchParams({
@@ -29,7 +33,9 @@ export default function TrackingContent({
                             },
                         }
                     );
+                    
                     const json = await res.json();
+                    console.log(json);
                     const { timeLeft, session } = json;
                     setSession(session);
                     setTimeLeft(timeLeft);
@@ -39,6 +45,9 @@ export default function TrackingContent({
                     setTimeLeft(null);
                     setErrors(["Problem connecting with server"]);
                 }
+            }
+            else if (stopSessionUpdates) {
+                clearInterval(interval);
             }
         };
 
@@ -101,6 +110,86 @@ export default function TrackingContent({
         return int;
     }
 
+    async function saveDefects() {
+        toggleSession(true);
+        try {
+            let defectsAmountValue = defectsAmount;
+            if (typeof defectsAmount != 'number' || isNaN(defectsAmount)) {
+                defectsAmountValue = 0;
+            }
+
+            console.log(typeof defectsAmount, defectsAmount, defectsAmountValue);
+            
+            const params = new URLSearchParams({
+                session_id: session.id,
+                defects_amount: defectsAmountValue,
+            });
+            const url = `http://localhost:5000/save-defects?${params}`;
+
+            fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                }
+            )
+                .then(async response => {
+                    const json = await response.json();
+                    const success = json.success;
+                    console.log(json);
+                    if (success) {
+                        router.push("/final-submission");
+                        setErrors([]);
+                    }
+                    else {
+                        setErrors(["Failed to save data"]);
+                    }
+                })
+                .catch(error => {
+                    setErrors(["Failed to save data"]);
+                });
+        }
+        catch (error) {
+            console.log("Failed to save defects");
+        }
+    }
+
+    async function resetSession() {
+        setStopSessionUpdates(true);
+        try {
+            const params = new URLSearchParams({
+                session_id: session.id,
+            });
+            const url = `http://localhost:5000/reset-session?${params}`;
+
+            fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                }
+            )
+                .then(async response => {
+                    const json = await response.json();
+                    const success = json.success;
+                    console.log(json);
+                    if (success) {
+                        router.push("/login-and-build");
+                        setErrors([]);
+                    }
+                    else {
+                        setErrors(["Failed to reset session"]);
+                    }
+                })
+                .catch(error => {
+                    setErrors(["Failed to reset session"]);
+                });
+        }
+        catch (error) {
+            console.log("Failed to save defects");
+        }
+    }
+
     const formattedTime = getFormattedTime(timeLeft);
     let textClasses = styles.timer__time;
     if (timeLeft < 0) {
@@ -111,9 +200,15 @@ export default function TrackingContent({
         <div className={styles.timer}>
             {
                 timeLeft < 0
-                ? <Popup
-                    styles={styles} />
-                : errors.length == 0 && session && session.is_paused
+                    ? <Popup
+                        styles={styles}
+                        session={session}
+                        submitData={resetSession}
+                    />
+                    : null
+            }
+            {
+                errors.length == 0 && session && session.is_paused
                     ? <Overlay
                         styles={styles}
                         resumeSession={() => toggleSession(false)}
@@ -124,6 +219,9 @@ export default function TrackingContent({
                         />
                         : <Timer
                             styles={styles}
+                            submitData={saveDefects}
+                            defectsAmount={defectsAmount}
+                            setDefectsAmount={setDefectsAmount}
                             textClasses={textClasses}
                             formattedTime={formattedTime}
                             pauseSession={()=>toggleSession(true)}

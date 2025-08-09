@@ -1,12 +1,24 @@
 import React, {useState, useEffect} from 'react';
 
 
-export default function Popup({ styles }) {
-    const [time, setTime] = useState(10 * 60);
+export default function Popup({ styles, session, submitData }) {
+    let storedTime = localStorage.getItem('storedTime');
+    if (!storedTime) { 
+        storedTime = 1 * 60;
+    }
+    const [time, setTime] = useState(storedTime);
 
     useEffect(() => {
         const runTimer = async () => {
-            setTime(prevTime => prevTime - 1);
+            setTime(prevTime => {
+                if (prevTime - 1 <= 0) {
+                    clearInterval(interval);
+                    resetSession();
+                    submitData();
+                }
+                localStorage.setItem('storedTime', prevTime - 1);
+                return prevTime - 1;
+            });
         };
 
         runTimer();
@@ -16,12 +28,33 @@ export default function Popup({ styles }) {
         return () => clearInterval(interval);
     }, []);
 
+    function resetSession() {
+
+    }
+
     function handleYesBtn() {
-        setTime(10 * 60);
+        setExtraTime();
     }
 
     function handleNoBtn() {
-        setTime(10 * 60);
+        setExtraTime();
+    }
+
+    async function setExtraTime() {
+        const baseUrl = "http://localhost:5000/set-extra-time";
+        const params = new URLSearchParams({
+            session_id: session.id
+        });
+        const res = await fetch(`${baseUrl}?${params}`,
+            {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json"
+                },
+            }
+        );
+        const json = await res.json();
+        console.log(json);
     }
 
     function getFormattedTime(timeSeconds) {

@@ -102,6 +102,7 @@
     }
 
     &__controls {
+        margin-bottom: 2rem;
         display: flex;
         justify-content: center;
         gap: 2rem;
@@ -110,6 +111,25 @@
 
     &__btn {
         @include button;
+    }
+
+    &__inputs-wrap {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+    &__label {
+        margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+
+        &-text {
+            @include label-text;
+        }
+    }
+    &__input {
+        @include input;
     }
 }
 
